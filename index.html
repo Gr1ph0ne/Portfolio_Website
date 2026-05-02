@@ -1,4 +1,3 @@
-html_content = '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,7 +59,7 @@ html_content = '''
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: blur(8px) brightness(0.4);
+            filter: blur(12px) brightness(0.4);
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
@@ -113,6 +112,7 @@ html_content = '''
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
+
         .cta-button {
             display: inline-block;
             padding: 1rem 2.5rem;
@@ -153,6 +153,7 @@ html_content = '''
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
             align-items: center;
+            position: relative;
         }
 
         .about-image {
@@ -175,10 +176,86 @@ html_content = '''
         }
 
         .about-text p {
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 1.3rem;
+            line-height: 1.5;
             color: #cccccc;
             margin-bottom: 1.5rem;
+        }
+
+        .about-text p.intro {
+            margin-bottom: 0.3rem;
+        }
+
+        .about-text p.program {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+            .about-text p.program a {
+                color: #e0e0e0;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .about-text p.program a:hover {
+                    color: #f5a623;
+                    text-decoration: underline;
+                }
+
+        .grad-icon {
+            font-size: 2rem;
+        }
+
+        .about-text strong {
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .download-buttons {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.75rem;
+            background-color: #f5d7a1;
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 166, 35, 0.2);
+        }
+
+            .download-btn:hover {
+                background-color: #f5a623;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(245, 166, 35, 0.4);
+            }
+
+        .download-icon {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .highlight-text {
+            font-size: 1.3rem;
+            color: #ffffff;
+            font-weight: 400;
+            margin-top: 2rem;
+            margin-bottom: 2.5rem;
+            text-align: left;
+            line-height: 1.7;
         }
 
         .skills {
@@ -230,6 +307,71 @@ html_content = '''
                 transform: translateY(-10px);
                 box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
             }
+            .project-card.hidden {
+                display: none;
+            }
+            .project-card.reveal {
+                animation: fadeInUp 0.6s ease-out forwards;
+            }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .show-more-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .show-more-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #f5a623;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 2px solid #f5a623;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+            .show-more-btn:hover {
+                background: #f5a623;
+                color: #1a1a1a;
+            }
+
+            .show-more-btn.hidden {
+                display: none;
+            }
+            .show-more-btn .hide-text.hidden,
+            .show-more-btn .show-text.hidden {
+                display: none;
+            }
+
+        .project-card.fade-out {
+            animation: fadeOutDown 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
 
         .project-image {
             width: 100%;
@@ -238,8 +380,19 @@ html_content = '''
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666666;
-            font-size: 1.2rem;
+            overflow: hidden; /* ADD THIS */
+            position: relative; /* ADD THIS */
+        }
+
+            .project-image img { /* ADD THIS BLOCK */
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+        .project-card:hover .project-image img { /* BONUS: Zoom on hover */
+            transform: scale(1.05);
         }
 
         .project-info {
@@ -270,6 +423,10 @@ html_content = '''
             border-radius: 15px;
             font-size: 0.85rem;
             color: #f5a623;
+        }
+
+        .art-gallery {
+            background-color: #222222;
         }
 
         /* Contact Section */
@@ -351,6 +508,15 @@ html_content = '''
                 flex-direction: column;
                 align-items: center;
             }
+            .download-buttons {
+                position: static;
+                margin-bottom: 2rem;
+                align-items: stretch;
+            }
+
+            .download-btn {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -396,18 +562,36 @@ html_content = '''
     <section class="about" id="about">
         <div class="about-container">
             <div class="about-image">
-                [Profile Photo]
+                <img src="Content/MyPicture.png" alt="Grigory Tsibulya"
+                     style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <div class="about-text">
                 <h2>About Me</h2>
-                <p>
-                    Hello! I'm a passionate game developer with expertise in creating engaging
-                    multiplayer experiences and visually stunning game mechanics. My work combines
-                    technical proficiency with creative design thinking.
+                <div class="download-buttons">
+                    <a href="Content/files/Grigory_Tsibulya_CV.pdf" download class="download-btn">
+                        <span class="download-icon">⬇</span>
+                        Download CV
+                    </a>
+                    <a href="Content/files/Grigory_Tsibulya_Motivation_Letter.pdf" download class="download-btn">
+                        <span class="download-icon">⬇</span>
+                        Motivation Letter
+                    </a>
+                </div>
+                <p class="intro">Hello,</p>
+                <p class="intro">I am a student of</p>
+                <p class="program">
+                    <span class="grad-icon">🎓</span>
+                    <a href="https://www.digitalartsandentertainment.be/page/139/Independent+Game+Production" target="_blank"
+                    <span>Digital Art and Entertainment.<br>Independent Game Production</span></a>
                 </p>
                 <p>
-                    I specialize in Unity development, shader programming, and 3D asset creation.
-                    From concept to deployment, I love bringing unique game ideas to life.
+                    I think video games are the best way to <strong>relax</strong> and, just as importantly, a great way to <strong>connect with friends</strong> and <strong>share new experiences</strong> together. I believe no story or game mechanics can compare to the <strong>interactions</strong> between players. That's why I'm so passionate about multiplayer games.
+                </p>
+                <p>
+                    If friends can jump into a game and have fun, it's a <strong>good</strong> game. If they can do this every day and feel something new and unique every time, it's a <strong>brilliant</strong> game.
+                </p>
+                <p class="highlight-text">
+                    That's, I believe, what i should aim for.
                 </p>
                 <div class="skills">
                     <span class="skill-tag">Unity</span>
@@ -415,7 +599,7 @@ html_content = '''
                     <span class="skill-tag">Shader Graph</span>
                     <span class="skill-tag">Blender 3D</span>
                     <span class="skill-tag">Game Design</span>
-                    <span class="skill-tag">Multiplayer Systems</span>
+                    <span class="skill-tag">Substance Painter 3D</span>
                 </div>
             </div>
         </div>
@@ -423,109 +607,233 @@ html_content = '''
 
     <!-- Projects Section -->
     <section class="projects" id="projects">
-        <h2>My Gallery</h2>
+        <h2>Game Projects</h2>
         <div class="projects-grid">
             <!-- Project 1 -->
             <div class="project-card">
-                <div class="project-image">[Project Screenshot]</div>
+                <div class="project-image">
+                    <img src="Content/games/MonsterMines.png" alt="Asymmetric Horror Prototype">
+                </div>
                 <div class="project-info">
-                    <h3>Asymmetric Horror Prototype</h3>
+                    <h3>Monster Mines</h3>
                     <p>
-                        A unique multiplayer horror experience featuring asymmetric gameplay
-                        with custom AI systems and atmospheric shader effects.
+                        Game Jam 04/2026 <br>
+                        Horror-puzzle game where players navigate a haunted mine, solving environmental puzzles while avoiding a relentless monster. <br>
+                        My role - Team Lead, 3D Artist, Game Designer, Level Designer
                     </p>
                     <div class="project-tags">
+                        <span class="project-tag">Game Jam</span>
                         <span class="project-tag">Unity</span>
-                        <span class="project-tag">Multiplayer</span>
                         <span class="project-tag">Horror</span>
                     </div>
                 </div>
             </div>
 
+
             <!-- Project 2 -->
             <div class="project-card">
-                <div class="project-image">[Project Screenshot]</div>
+                <div class="project-image">
+                    <img src="Content/games/PBantJ.png" alt="Asymmetric Horror Prototype">
+                </div>
                 <div class="project-info">
-                    <h3>Retail Rampage</h3>
+                    <h3>PB ant J</h3>
                     <p>
-                        Fast-paced action game with dynamic combat mechanics and
-                        procedurally generated environments for endless replayability.
+                        Game Jam 04/2025 <br>
+                        A chaotic co-op game where one plays jam and the other peanut butter, racing together to cover the bread before the ants devour you. <br>
+                        My role - 3D Artist, Game Designer
                     </p>
                     <div class="project-tags">
+                        <span class="project-tag">Game Jam</span>
                         <span class="project-tag">Unity</span>
                         <span class="project-tag">Action</span>
-                        <span class="project-tag">Procedural</span>
+                        <span class="project-tag">Co-op</span>
                     </div>
                 </div>
             </div>
 
             <!-- Project 3 -->
             <div class="project-card">
-                <div class="project-image">[Project Screenshot]</div>
+                <div class="project-image">
+                    <img src="Content/games/Bloxiz.png" alt="Asymmetric Horror Prototype">
+                </div>
                 <div class="project-info">
-                    <h3>Crystal vs Robots</h3>
+                    <h3>Bloxiz</h3>
                     <p>
-                        Strategic tower defense game featuring unique crystal-based mechanics
-                        and challenging AI opponents with adaptive difficulty.
+                        02/2025 - 05/2025<br>
+                        Mobile creature collection game<br>
+                        My role - 3D Artist, UI Artist, Sound Designer
                     </p>
                     <div class="project-tags">
                         <span class="project-tag">Unity</span>
+                        <span class="project-tag">Mobile</span>
                         <span class="project-tag">Strategy</span>
-                        <span class="project-tag">AI</span>
                     </div>
                 </div>
             </div>
 
             <!-- Project 4 -->
-            <div class="project-card">
-                <div class="project-image">[Project Screenshot]</div>
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/games/RetailRampage.png" alt="Asymmetric Horror Prototype">
+                </div>
                 <div class="project-info">
-                    <h3>Tower Defense</h3>
+                    <h3>Retail Rampage</h3>
                     <p>
-                        Classic tower defense mechanics reimagined with modern shader
-                        effects and polished UI/UX design for an engaging player experience.
+                        04/2024 - 05/2024<br>
+                        Monopoly-like party game<br>
+                        My role - Programmer<br>    
+
                     </p>
                     <div class="project-tags">
                         <span class="project-tag">Unity</span>
-                        <span class="project-tag">TD</span>
-                        <span class="project-tag">Shaders</span>
+                        <span class="project-tag">Multiplayer</span>
+                        <span class="project-tag">Strategy</span>
                     </div>
                 </div>
             </div>
 
             <!-- Project 5 -->
-            <div class="project-card">
-                <div class="project-image">[Project Screenshot]</div>
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/games/HaveYourCake.png" alt="Asymmetric Horror Prototype">
+                </div>
                 <div class="project-info">
-                    <h3>Adaptive Texture Prototype</h3>
+                    <h3>Have Your Cake</h3>
                     <p>
-                        Technical demo showcasing advanced shader techniques for
-                        dynamic texture adaptation and real-time visual effects.
+                        Game Jam 09/2025<br>
+                        An object-finding game with parkour elements set in an ever-evolving procedurally generated world.<br>
+                        My role - 3D Artist, Game Designer
                     </p>
+                    <div class="project-tags">
+                        <span class="project-tag">Game Jam</span>
+                        <span class="project-tag">Unity</span>
+                        <span class="project-tag">Procedural</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="show-more-container">
+            <button class="show-more-btn" id="toggle-games">
+                <span class="show-text">More</span>
+                <span class="hide-text hidden">Less</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Art Gallery Section -->
+    <section class="projects art-gallery" id="art-gallery">
+        <h2>Art Gallery</h2>
+        <div class="projects-grid">
+            <!-- Art 1 -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="Content/art/Plane.png" alt="Plane">
+                </div>
+                <div class="project-info">
+                    <h3>Plane</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
                     <div class="project-tags">
                         <span class="project-tag">Shader Graph</span>
-                        <span class="project-tag">HDRP</span>
-                        <span class="project-tag">R&D</span>
                     </div>
                 </div>
             </div>
-
-            <!-- Project 6 -->
+            <!-- Art 2 -->
             <div class="project-card">
-                <div class="project-image">[Project Screenshot]</div>
+                <div class="project-image">
+                    <img src="Content/art/Kart.png" alt="Kart">
+                </div>
                 <div class="project-info">
-                    <h3>3D Asset Collection</h3>
-                    <p>
-                        Curated collection of game-ready 3D assets created in Blender,
-                        featuring optimized meshes and detailed textures.
-                    </p>
+                    <h3>Kart</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
                     <div class="project-tags">
-                        <span class="project-tag">Blender</span>
-                        <span class="project-tag">3D Modeling</span>
-                        <span class="project-tag">Texturing</span>
+                        <span class="project-tag">Shader Graph</span>
                     </div>
                 </div>
             </div>
+            <!-- Art 3 -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="Content/art/FluffyAlienPlanet.png" alt="FluffyAlienPlanet">
+                </div>
+                <div class="project-info">
+                    <h3>Fluffy Alien Planet</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Shader Graph</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Art 4 -->
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/art/ArtisansDesk.png" alt="Artisans Desk">
+                </div>
+                <div class="project-info">
+                    <h3>Artisans Desk</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Shader Graph</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Art 5 -->
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/art/SimpleScene.png" alt="Simple Scene">
+                </div>
+                <div class="project-info">
+                    <h3>Simple Scene</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Shader Graph</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Art 6 -->
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/art/StylizedLevel.png" alt="Stylized Level">
+                </div>
+                <div class="project-info">
+                    <h3>Stylized Level</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Shader Graph</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Art 7 -->
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/art/Diorama.png" alt="Diorama">
+                </div>
+                <div class="project-info">
+                    <h3>Diorama</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Shader Graph</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Art 8 -->
+            <div class="project-card hidden">
+                <div class="project-image">
+                    <img src="Content/art/Castle.png" alt="Castle">
+                </div>
+                <div class="project-info">
+                    <h3>Castle</h3>
+                    <p>Technical demo showcasing advanced shader techniques...</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Shader Graph</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="show-more-container">
+            <button class="show-more-btn" id="toggle-art">
+                <span class="show-text">More</span>
+                <span class="hide-text hidden">Less</span>
+            </button>
         </div>
     </section>
 
@@ -578,24 +886,118 @@ html_content = '''
                 }
             });
         });
+        const toggleGamesBtn = document.getElementById('toggle-games');
+        let gamesExpanded = false;
+
+        if (toggleGamesBtn) {
+            toggleGamesBtn.addEventListener('click', function () {
+                const hiddenCards = document.querySelectorAll('#projects .project-card.hidden');
+                const visibleExtraCards = document.querySelectorAll('#projects .project-card.reveal');
+                const showText = this.querySelector('.show-text');
+                const hideText = this.querySelector('.hide-text');
+
+                if (!gamesExpanded) {
+                    // EXPAND
+                    hiddenCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.remove('hidden');
+                            card.classList.add('reveal');
+                        }, index * 150);
+                    });
+
+                    setTimeout(() => {
+                        showText.classList.add('hidden');
+                        hideText.classList.remove('hidden');
+                        gamesExpanded = true;
+                    }, hiddenCards.length * 150);
+
+                } else {
+                    // COLLAPSE
+                    const cardsArray = Array.from(visibleExtraCards);
+                    cardsArray.reverse().forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('fade-out');
+                            setTimeout(() => {
+                                card.classList.remove('reveal', 'fade-out');
+                                card.classList.add('hidden');
+                            }, 400);
+                        }, index * 100);
+                    });
+
+                    setTimeout(() => {
+                        showText.classList.remove('hidden');
+                        hideText.classList.add('hidden');
+                        gamesExpanded = false;
+                    }, cardsArray.length * 100);
+
+                    // Scroll to section top
+                    setTimeout(() => {
+                        document.getElementById('projects').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 200);
+                }
+            });
+        }
+
+        const toggleArtBtn = document.getElementById('toggle-art');
+        let artExpanded = false;
+        
+        if (toggleArtBtn) {
+            toggleArtBtn.addEventListener('click', function() {
+                const hiddenCards = document.querySelectorAll('#art-gallery .project-card.hidden');
+                const visibleExtraCards = document.querySelectorAll('#art-gallery .project-card.reveal');
+                const showText = this.querySelector('.show-text');
+                const hideText = this.querySelector('.hide-text');
+                
+                if (!artExpanded) {
+                    // EXPAND - Show hidden cards
+                    hiddenCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.remove('hidden');
+                            card.classList.add('reveal');
+                        }, index * 150);
+                    });
+                    
+                    // Update button text
+                    setTimeout(() => {
+                        showText.classList.add('hidden');
+                        hideText.classList.remove('hidden');
+                        artExpanded = true;
+                    }, hiddenCards.length * 150);
+                    
+                } else {
+                    // COLLAPSE - Hide extra cards
+                    const cardsArray = Array.from(visibleExtraCards);
+                    cardsArray.reverse().forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('fade-out');
+                            setTimeout(() => {
+                                card.classList.remove('reveal', 'fade-out');
+                                card.classList.add('hidden');
+                            }, 400);
+                        }, index * 100);
+                    });
+                    
+                    // Update button text
+                    setTimeout(() => {
+                        showText.classList.remove('hidden');
+                        hideText.classList.add('hidden');
+                        artExpanded = false;
+                    }, cardsArray.length * 100);
+                    
+                    // Smooth scroll to section
+                    setTimeout(() => {
+                        document.getElementById('art-gallery').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }, 200);
+                }
+            });
+        }
     </script>
 </body>
 </html>'''
 
-# Save the updated HTML file
-with open('output/portfolio.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("Portfolio updated with background slideshow/video!")
-print("File saved to: output/portfolio.html")
-print("\n✓ Added features:")
-print("- Background slideshow with 4 images (currently using placeholders)")
-print("- Automatic slide transition every 4 seconds")
-print("- 8px blur effect on background")
-print("- Darkened background (40% brightness) for text readability")
-print("- Gradient overlay for better contrast")
-print("- Option to switch to video background (commented code included)")
-print("\n📝 To use your own media:")
-print("1. For slideshow: Replace placeholder image URLs with your project screenshots")
-print("2. For video: Uncomment the video section and add your video file path")
-print("   (Recommended format: MP4, H.264 codec)")
