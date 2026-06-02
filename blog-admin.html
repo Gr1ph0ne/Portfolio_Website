@@ -30,6 +30,8 @@
         .nav-link:hover { background: rgba(245,166,35,0.1); transform: translateY(-2px); }
         .nav-link.danger { border-color: #555; color: #888; }
         .nav-link.danger:hover { border-color: #e74c3c; color: #e74c3c; background: rgba(231,76,60,0.08); }
+        .nav-link.muted { border-color: #444; color: #888; font-size: 0.85rem; padding: 0.5rem 1.1rem; }
+        .nav-link.muted:hover { border-color: #f5a623; color: #f5a623; background: rgba(245,166,35,0.08); }
 
         /* ── SECTION WRAPPER ── */
         .admin-section { padding: 4rem 2rem; border-bottom: 1px solid #2e2e2e; }
@@ -151,6 +153,9 @@
         <span class="nav-name">Blog Admin</span>
         <div class="nav-right">
             <a href="blog.html" class="nav-link">← View Blog</a>
+            <button class="nav-link muted" id="export-btn" title="Download all posts and upcoming projects as a JSON file">Export data</button>
+            <label class="nav-link muted" for="import-file" title="Load a previously exported JSON file into this browser" style="cursor:pointer;margin:0;">Import data</label>
+            <input type="file" id="import-file" accept=".json" style="display:none;">
             <button class="nav-link danger" id="logout-btn">Log out</button>
         </div>
     </nav>
@@ -553,8 +558,6 @@ function renderUpcomingEditor() {
             </div>
             <label>Description</label>
             <textarea id="uc-desc-${i}" placeholder="Short description...">${escHtml(p.description)}</textarea>
-            <label style="margin-top:1rem;">Project page URL <span style="color:#555;font-size:0.8rem;text-transform:none;letter-spacing:0">(optional — if set, card links here instead of blog)</span></label>
-            <input type="text" id="uc-page-${i}" value="${escHtml(p.pageUrl || '')}" placeholder="e.g. read-me.html">
         </div>
     `).join('');
 }
@@ -593,17 +596,57 @@ function collectAndSaveUpcoming() {
         const titleEl  = document.getElementById(`uc-title-${i}`);
         const statusEl = document.getElementById(`uc-status-${i}`);
         const descEl   = document.getElementById(`uc-desc-${i}`);
-        const pageEl   = document.getElementById(`uc-page-${i}`);
         if (titleEl)  list[i].title       = titleEl.value.trim();
         if (statusEl) list[i].status      = statusEl.value;
         if (descEl)   list[i].description = descEl.value.trim();
-        if (pageEl)   list[i].pageUrl     = pageEl.value.trim();
     });
     saveUpcoming(list);
 }
 
 // ── WIRE UP NEW POST IMAGE UPLOAD ─────────────────────────────────────────────
 setupImageUpload('image-upload-area', 'image-file-input', b64 => { newPostImage = b64; });
+
+// ── EXPORT ───────────────────────────────────────────────────────────────────
+document.getElementById('export-btn').addEventListener('click', () => {
+    const data = {
+        posts:    loadPosts(),
+        upcoming: loadUpcoming()
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'blog-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
+// ── IMPORT ───────────────────────────────────────────────────────────────────
+document.getElementById('import-file').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data.posts || !data.upcoming) {
+                alert('Invalid file — make sure you are importing a file exported from this admin page.');
+                return;
+            }
+            if (!confirm(`This will replace all current data with the imported file (${data.posts.length} posts, ${data.upcoming.length} upcoming projects). Continue?`)) return;
+            savePosts(data.posts);
+            saveUpcoming(data.upcoming);
+            renderManage();
+            renderUpcomingEditor();
+            alert('Import successful!');
+        } catch (err) {
+            alert('Could not read the file. Make sure it is a valid JSON export.');
+        }
+    };
+    reader.readAsText(file);
+    this.value = ''; // reset so same file can be re-imported if needed
+});
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 if (isLoggedIn()) { showAdmin(); } else { showLogin(); }
