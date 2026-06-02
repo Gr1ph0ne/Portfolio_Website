@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog – Grigory Tsibulya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a; color: #ffffff; }
+
+        /* ── NAV ── */
+        .nav { position: sticky; top: 0; z-index: 100; background: rgba(26,26,26,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #2e2e2e; padding: 1.2rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .nav-name { font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #f5a623, #e67e22); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+        .nav-back { display: inline-block; padding: 0.6rem 1.5rem; background: transparent; border: 2px solid #f5a623; color: #f5a623; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 0.9rem; transition: transform 0.3s, box-shadow 0.3s, background 0.3s; }
+        .nav-back:hover { background: rgba(245,166,35,0.1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245,166,35,0.25); }
+
+        /* ── HEADER ── */
+        .blog-header { padding: 5rem 2rem 3rem; text-align: center; }
+        .blog-header h1 { font-size: 3.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #f5a623, #e67e22); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .blog-header p { font-size: 1.2rem; color: #cccccc; line-height: 1.8; max-width: 600px; margin: 0 auto; }
+
+        /* ── UPCOMING ── */
+        .upcoming { padding: 4rem 2rem; background-color: #222222; }
+        .upcoming h2 { text-align: center; font-size: 3rem; margin-bottom: 3rem; color: #f5a623; }
+        .upcoming-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .upcoming-card { background-color: #252525; border-radius: 15px; padding: 2rem; border: 1px solid #333333; transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; cursor: pointer; }
+        .upcoming-card .click-hint { font-size: 0.78rem; color: #555555; margin-top: 0.75rem; transition: color 0.3s; }
+        .upcoming-card:hover .click-hint { color: #f5a623; }
+        .upcoming-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(135deg, #f5a623, #e67e22); }
+        .upcoming-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+        .upcoming-status { display: inline-block; background-color: #333333; color: #f5a623; padding: 0.3rem 0.9rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+        .upcoming-card h3 { font-size: 1.4rem; margin-bottom: 0.75rem; color: #ffffff; }
+        .upcoming-card p  { color: #aaaaaa; line-height: 1.6; }
+
+        /* ── POSTS ── */
+        .posts-section { padding: 6rem 2rem; background-color: #1a1a1a; }
+        .posts-section h2 { text-align: center; font-size: 3rem; margin-bottom: 2rem; color: #f5a623; }
+
+        .filter-bar { max-width: 900px; margin: 0 auto 3rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+        .filter-label { color: #aaaaaa; font-size: 0.95rem; margin-right: 0.25rem; }
+        .tag-filter-btn { background-color: #333333; border: 1px solid #444444; color: #aaaaaa; border-radius: 50px; padding: 0.5rem 1.2rem; font-size: 0.85rem; font-family: inherit; cursor: pointer; transition: all 0.3s; }
+        .tag-filter-btn:hover, .tag-filter-btn.active { background-color: #f5a623; border-color: #f5a623; color: #1a1a1a; font-weight: 600; }
+
+        .posts-list { max-width: 900px; margin: 0 auto; }
+
+        /* post card */
+        .post-card { background-color: #252525; border-radius: 15px; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid #333333; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+        .post-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+
+        .post-cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform 0.3s; }
+        .post-card:hover .post-cover { transform: scale(1.03); }
+        .post-cover-wrap { overflow: hidden; }
+
+        .post-card-body { padding: 2rem; }
+        .post-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .post-date { color: #666666; font-size: 0.85rem; }
+        .post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .post-tag { background-color: #333333; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; color: #f5a623; }
+        .post-card h3 { font-size: 1.5rem; margin-bottom: 0.75rem; color: #ffffff; }
+        .post-card .excerpt { color: #aaaaaa; line-height: 1.6; margin-bottom: 1.25rem; }
+
+        .post-body { display: none; color: #cccccc; line-height: 1.8; border-top: 1px solid #333333; padding-top: 1.25rem; margin-top: 0.5rem; margin-bottom: 1.25rem; }
+        .post-body.open { display: block; animation: fadeInUp 0.4s ease-out forwards; }
+        .post-body p  { margin-bottom: 1rem; }
+        .post-body h4 { color: #f5a623; font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+        .post-body ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .post-body li { margin-bottom: 0.4rem; color: #cccccc; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .read-more-btn { display: inline-block; padding: 0.6rem 1.5rem; background: transparent; border: 2px solid #444444; color: #aaaaaa; border-radius: 50px; font-size: 0.9rem; font-family: inherit; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .read-more-btn:hover { border-color: #f5a623; color: #f5a623; }
+
+        .no-results { display: none; text-align: center; padding: 4rem 0; color: #666666; font-size: 1rem; }
+
+        /* ── FOOTER ── */
+        .footer { padding: 2rem; background-color: #1a1a1a; text-align: center; color: #666666; }
+
+        @media (max-width: 768px) {
+            .blog-header h1 { font-size: 2.5rem; }
+            .upcoming h2, .posts-section h2 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <span class="nav-name">Grigory Tsibulya</span>
+    <a href="index.html" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<header class="blog-header">
+    <h1>Dev Blog</h1>
+    <p>Thoughts on game development, design decisions, and what I'm building next.</p>
+</header>
+
+<section class="upcoming">
+    <h2>Upcoming Projects</h2>
+    <div class="upcoming-grid" id="upcoming-grid"></div>
+</section>
+
+<section class="posts-section" id="posts-section">
+    <h2>Posts</h2>
+    <div class="filter-bar" id="filter-bar">
+        <span class="filter-label">Filter by tag:</span>
+        <button class="tag-filter-btn active" data-tag="all">All</button>
+    </div>
+    <div class="posts-list" id="posts-list"></div>
+    <p class="no-results" id="no-results">No posts with that tag yet.</p>
+</section>
+
+<footer class="footer"><p>&copy; 2026 Grigory Tsibulya. All rights reserved.</p></footer>
+
+<script>
+const POSTS_KEY    = 'gtblog_posts';
+const UPCOMING_KEY = 'gtblog_upcoming';
+
+// ── SEED DATA (written to localStorage on first ever visit) ───────────────────
+const seedPosts = [
+    { id:1, title:"Why I'm obsessed with multiplayer design", date:"2026-05-20", image:null,
+      excerpt:"Single-player games tell stories. Multiplayer games create them. Here's my design philosophy and why player interaction is the core of everything I build.",
+      body:"### The moment that changed my perspective\n\nI was playing a small co-op prototype with friends when one of them accidentally triggered an alarm while trying to help me. We both froze — then burst out laughing. No scripted cutscene could have produced that.\n\n### What I look for in multiplayer design\n\nI always ask three questions:\n\n- Can two strangers pick this up and have fun in under 5 minutes?\n- Does it reward communication, even non-verbal?\n- Is there a moment that only happens with other people?\n\nIf yes to all three, it's worth building.",
+      tags:["Game Design","Multiplayer"] },
+    { id:2, title:"Monster Mines post-mortem: what went right, what didn't", date:"2026-04-30", image:null,
+      excerpt:"Monster Mines was built in 72 hours for a game jam. Here's an honest breakdown of the decisions I made under pressure — and what I'd do differently.",
+      body:"### Context\n\nMonster Mines was my April 2026 jam entry. The theme was \"underground\" and I had 72 hours.\n\n### What went right\n\nThe core loop was locked in within the first 4 hours. I prototyped movement and mining before touching any art — that discipline paid off.\n\n### What went wrong\n\nI underestimated the UI. I left it to the last 6 hours and it shows. The inventory screen is barely readable on small screens.\n\n### Lessons\n\n- Prototype the HUD earlier, even with placeholder art.\n- Write down the control scheme and put it on the first screen.\n- Scope to 60% of what you think you can do.",
+      tags:["Post-Mortem","Game Jam","Unity"] },
+    { id:3, title:"Toon shaders in Unity URP: my workflow", date:"2026-03-15", image:null,
+      excerpt:"A quick walkthrough of how I approach stylised toon shading in Unity's Universal Render Pipeline using Shader Graph.",
+      body:"### Why toon shading?\n\nRealism is expensive in art time and GPU time. Stylised shading with bold colours and sharp step lighting is fast and ages well.\n\n### The basic setup\n\nI start with a custom lighting function that replaces the default PBR model with a ramp texture — a 256x4 gradient where horizontal is NdotL and vertical is shadow intensity.\n\n### Adding the outline\n\nI use a second pass with inverted normals and slight vertex extrusion. In URP this needs a custom renderer feature — about 40 lines of code.\n\n### Tips\n\n- Keep your ramp texture in linear colour space.\n- Add a rim light pass — it reads as stylised more than almost anything else.\n- Test on a grey unlit material first.",
+      tags:["Shader","Unity","Art"] }
+];
+
+const seedUpcoming = [
+    { title:"Unnamed Multiplayer Puzzle",   status:"In Development", description:"A co-op puzzle game built around asymmetric information — each player sees a different version of the world." },
+    { title:"Stylised Dungeon Crawler",      status:"Prototyping",    description:"Procedural dungeon generation meets hand-painted toon shaders. Targeting a solo-jam release." },
+    { title:"Shader Toolkit (Open Source)", status:"Planning",       description:"A collection of reusable Shader Graph effects — dissolves, holograms, outlines — packaged for Unity URP." }
+];
+
+function loadPosts() {
+    try {
+        const s = localStorage.getItem(POSTS_KEY);
+        if (s) return JSON.parse(s);
+    } catch(e) {}
+    localStorage.setItem(POSTS_KEY, JSON.stringify(seedPosts));
+    return seedPosts;
+}
+
+function loadUpcoming() {
+    try {
+        const s = localStorage.getItem(UPCOMING_KEY);
+        if (s) return JSON.parse(s);
+    } catch(e) {}
+    return seedUpcoming;
+}
+
+let posts        = loadPosts();
+let activeFilter = 'all';
+
+// ── UPCOMING ──────────────────────────────────────────────────────────────────
+function filterByProject(tag) {
+    activeFilter = tag || 'all';
+    renderFilters();
+    renderPosts();
+    document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Maps a project title (lowercase) to its dedicated page filename.
+// Add entries here as you create more project pages.
+const PROJECT_PAGES = {
+    'read me': 'read-me.html',
+};
+
+function renderUpcoming() {
+    const list    = loadUpcoming();
+    const allTags = getAllTags();
+    document.getElementById('upcoming-grid').innerHTML = list.map(p => {
+        const page        = p.pageUrl || PROJECT_PAGES[p.title.toLowerCase()] || null;
+        const matchingTag = allTags.find(t => t.toLowerCase() === p.title.toLowerCase()) || null;
+
+        let onclick, hint;
+        if (page) {
+            onclick = `window.location.href='${page}'`;
+            hint    = `<p class="click-hint">→ View project page</p>`;
+        } else if (matchingTag) {
+            const safeTag = matchingTag.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+            onclick = `filterByProject('${safeTag}')`;
+            hint    = `<p class="click-hint">↓ See related posts</p>`;
+        } else {
+            onclick = `filterByProject('')`;
+            hint    = `<p class="click-hint">↓ Browse all posts</p>`;
+        }
+
+        return `
+        <div class="upcoming-card" onclick="${onclick}">
+            <span class="upcoming-status">${p.status}</span>
+            <h3>${p.title}</h3>
+            <p>${p.description}</p>
+            ${hint}
+        </div>`;
+    }).join('');
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────────
+function getAllTags() {
+    const set = new Set();
+    posts.forEach(p => p.tags.forEach(t => set.add(t)));
+    return [...set].sort();
+}
+
+function renderFilters() {
+    const bar = document.getElementById('filter-bar');
+    bar.querySelectorAll('[data-tag]:not([data-tag="all"])').forEach(b => b.remove());
+    getAllTags().forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'tag-filter-btn' + (tag === activeFilter ? ' active' : '');
+        btn.dataset.tag = tag;
+        btn.textContent = tag;
+        bar.appendChild(btn);
+    });
+    bar.querySelector('[data-tag="all"]').classList.toggle('active', activeFilter === 'all');
+}
+
+document.getElementById('filter-bar').addEventListener('click', e => {
+    if (!e.target.matches('.tag-filter-btn')) return;
+    activeFilter = e.target.dataset.tag;
+    renderFilters();
+    renderPosts();
+});
+
+// ── POSTS ─────────────────────────────────────────────────────────────────────
+function parseBody(raw) {
+    return raw.split('\n\n').map(block => {
+        if (block.startsWith('### ')) return `<h4>${block.slice(4)}</h4>`;
+        if (block.startsWith('- ') || block.includes('\n- ')) {
+            const items = block.split('\n').filter(l => l.startsWith('- ')).map(l => `<li>${l.slice(2)}</li>`).join('');
+            return `<ul>${items}</ul>`;
+        }
+        return `<p>${block}</p>`;
+    }).join('');
+}
+
+function renderPosts() {
+    const list      = document.getElementById('posts-list');
+    const noResults = document.getElementById('no-results');
+    const filtered  = activeFilter === 'all' ? posts : posts.filter(p => p.tags.includes(activeFilter));
+
+    if (filtered.length === 0) { list.innerHTML = ''; noResults.style.display = 'block'; return; }
+    noResults.style.display = 'none';
+
+    const sorted = [...filtered].sort((a, b) => b.date.localeCompare(a.date));
+    list.innerHTML = sorted.map(post => {
+        const dateStr  = new Date(post.date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+        const tagsHTML = post.tags.map(t => `<span class="post-tag">${t}</span>`).join('');
+        const coverHTML = post.image
+            ? `<div class="post-cover-wrap"><img class="post-cover" src="${post.image}" alt="${post.title}"></div>`
+            : '';
+        return `
+        <article class="post-card" id="post-${post.id}" onclick="toggleBody(${post.id}, document.querySelector('#post-${post.id} .read-more-btn'))">
+            ${coverHTML}
+            <div class="post-card-body">
+                <div class="post-meta">
+                    <span class="post-date">${dateStr}</span>
+                    <div class="post-tags">${tagsHTML}</div>
+                </div>
+                <h3>${post.title}</h3>
+                <p class="excerpt">${post.excerpt}</p>
+                <div class="post-body" id="body-${post.id}">${parseBody(post.body)}</div>
+                <button class="read-more-btn" onclick="event.stopPropagation(); toggleBody(${post.id}, this)">Read more</button>
+            </div>
+        </article>`;
+    }).join('');
+}
+
+function toggleBody(id, btn) {
+    const body = document.getElementById('body-' + id);
+    const open = body.classList.toggle('open');
+    btn.textContent = open ? 'Show less' : 'Read more';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// Apply tag filter from URL param if present (e.g. blog.html?tag=Read+Me)
+const _urlTag = new URLSearchParams(window.location.search).get('tag');
+if (_urlTag) activeFilter = _urlTag;
+
+renderFilters();
+renderPosts();
+renderUpcoming(); // runs after posts so getAllTags() has data
+
+// Scroll to posts section if a tag was passed in the URL
+if (_urlTag) {
+    setTimeout(() => {
+        document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+}
+</script>
+</body>
+</html>
