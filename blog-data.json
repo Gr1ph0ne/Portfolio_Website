@@ -18,7 +18,8 @@
     {
       "title": "Read Me",
       "status": "Prototyping",
-      "description": "Read Me - is a small game built around prediction mechanic. You and your friend are trapped on a tiny battle field with limited amount of actions. Try to outsmart your opponent and build an unforeseen strategy"
+      "description": "Read Me - is a small game built around prediction mechanic. You and your friend are trapped on a tiny battle field with limited amount of actions. Try to outsmart your opponent and build an unforeseen strategy",
+      "pageUrl": "read-me.html"
     }
   ]
 }
