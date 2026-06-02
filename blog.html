@@ -165,13 +165,24 @@ function renderUpcoming() {
     const list    = loadUpcoming();
     const allTags = getAllTags();
     document.getElementById('upcoming-grid').innerHTML = list.map(p => {
+        const page        = p.pageUrl || null;
         const matchingTag = allTags.find(t => t.toLowerCase() === p.title.toLowerCase()) || null;
-        const hint = matchingTag
-            ? `<p class="click-hint">↓ See related posts</p>`
-            : `<p class="click-hint">↓ Browse all posts</p>`;
-        const safeTag = matchingTag ? matchingTag.replace(/\\/g,'\\\\').replace(/'/g,"\\'") : '';
+
+        let onclick, hint;
+        if (page) {
+            onclick = `window.location.href='${page}'`;
+            hint    = `<p class="click-hint">→ View project page</p>`;
+        } else if (matchingTag) {
+            const safeTag = matchingTag.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+            onclick = `filterByProject('${safeTag}')`;
+            hint    = `<p class="click-hint">↓ See related posts</p>`;
+        } else {
+            onclick = `filterByProject('')`;
+            hint    = `<p class="click-hint">↓ Browse all posts</p>`;
+        }
+
         return `
-        <div class="upcoming-card" onclick="filterByProject('${safeTag}')">
+        <div class="upcoming-card" onclick="${onclick}">
             <span class="upcoming-status">${p.status}</span>
             <h3>${p.title}</h3>
             <p>${p.description}</p>

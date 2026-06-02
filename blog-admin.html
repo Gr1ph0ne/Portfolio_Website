@@ -558,6 +558,8 @@ function renderUpcomingEditor() {
             </div>
             <label>Description</label>
             <textarea id="uc-desc-${i}" placeholder="Short description...">${escHtml(p.description)}</textarea>
+            <label style="margin-top:0.5rem;">Project page URL <span style="color:#555;font-size:0.8rem;text-transform:none;letter-spacing:0">(optional — if set, card links here instead of blog)</span></label>
+            <input type="text" id="uc-page-${i}" value="${escHtml(p.pageUrl || '')}" placeholder="e.g. read-me.html">
         </div>
     `).join('');
 }
@@ -596,9 +598,11 @@ function collectAndSaveUpcoming() {
         const titleEl  = document.getElementById(`uc-title-${i}`);
         const statusEl = document.getElementById(`uc-status-${i}`);
         const descEl   = document.getElementById(`uc-desc-${i}`);
+        const pageEl   = document.getElementById(`uc-page-${i}`);
         if (titleEl)  list[i].title       = titleEl.value.trim();
         if (statusEl) list[i].status      = statusEl.value;
         if (descEl)   list[i].description = descEl.value.trim();
+        if (pageEl)   list[i].pageUrl     = pageEl.value.trim();
     });
     saveUpcoming(list);
 }
