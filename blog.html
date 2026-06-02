@@ -115,35 +115,34 @@
 const POSTS_KEY    = 'gtblog_posts';
 const UPCOMING_KEY = 'gtblog_upcoming';
 
-// ── SEED DATA (written to localStorage on first ever visit) ───────────────────
-const seedPosts = [
-    { id:1, title:"Why I'm obsessed with multiplayer design", date:"2026-05-20", image:null,
-      excerpt:"Single-player games tell stories. Multiplayer games create them. Here's my design philosophy and why player interaction is the core of everything I build.",
-      body:"### The moment that changed my perspective\n\nI was playing a small co-op prototype with friends when one of them accidentally triggered an alarm while trying to help me. We both froze — then burst out laughing. No scripted cutscene could have produced that.\n\n### What I look for in multiplayer design\n\nI always ask three questions:\n\n- Can two strangers pick this up and have fun in under 5 minutes?\n- Does it reward communication, even non-verbal?\n- Is there a moment that only happens with other people?\n\nIf yes to all three, it's worth building.",
-      tags:["Game Design","Multiplayer"] },
-    { id:2, title:"Monster Mines post-mortem: what went right, what didn't", date:"2026-04-30", image:null,
-      excerpt:"Monster Mines was built in 72 hours for a game jam. Here's an honest breakdown of the decisions I made under pressure — and what I'd do differently.",
-      body:"### Context\n\nMonster Mines was my April 2026 jam entry. The theme was \"underground\" and I had 72 hours.\n\n### What went right\n\nThe core loop was locked in within the first 4 hours. I prototyped movement and mining before touching any art — that discipline paid off.\n\n### What went wrong\n\nI underestimated the UI. I left it to the last 6 hours and it shows. The inventory screen is barely readable on small screens.\n\n### Lessons\n\n- Prototype the HUD earlier, even with placeholder art.\n- Write down the control scheme and put it on the first screen.\n- Scope to 60% of what you think you can do.",
-      tags:["Post-Mortem","Game Jam","Unity"] },
-    { id:3, title:"Toon shaders in Unity URP: my workflow", date:"2026-03-15", image:null,
-      excerpt:"A quick walkthrough of how I approach stylised toon shading in Unity's Universal Render Pipeline using Shader Graph.",
-      body:"### Why toon shading?\n\nRealism is expensive in art time and GPU time. Stylised shading with bold colours and sharp step lighting is fast and ages well.\n\n### The basic setup\n\nI start with a custom lighting function that replaces the default PBR model with a ramp texture — a 256x4 gradient where horizontal is NdotL and vertical is shadow intensity.\n\n### Adding the outline\n\nI use a second pass with inverted normals and slight vertex extrusion. In URP this needs a custom renderer feature — about 40 lines of code.\n\n### Tips\n\n- Keep your ramp texture in linear colour space.\n- Add a rim light pass — it reads as stylised more than almost anything else.\n- Test on a grey unlit material first.",
-      tags:["Shader","Unity","Art"] }
-];
+// ── DATA LOADING ─────────────────────────────────────────────────────────────
+// Priority: blog-data.json (repo) → localStorage (fallback) → empty
+let posts        = [];
+let activeFilter = 'all';
 
-const seedUpcoming = [
-    { title:"Unnamed Multiplayer Puzzle",   status:"In Development", description:"A co-op puzzle game built around asymmetric information — each player sees a different version of the world." },
-    { title:"Stylised Dungeon Crawler",      status:"Prototyping",    description:"Procedural dungeon generation meets hand-painted toon shaders. Targeting a solo-jam release." },
-    { title:"Shader Toolkit (Open Source)", status:"Planning",       description:"A collection of reusable Shader Graph effects — dissolves, holograms, outlines — packaged for Unity URP." }
-];
-
-function loadPosts() {
+async function loadData() {
+    // 1. Try fetching the published JSON from the repo
     try {
-        const s = localStorage.getItem(POSTS_KEY);
-        if (s) return JSON.parse(s);
+        const res = await fetch('blog-data.json?v=' + Date.now());
+        if (res.ok) {
+            const data = await res.json();
+            posts = data.posts    || [];
+            // Also cache in localStorage so repeat visits are instant
+            localStorage.setItem(POSTS_KEY,    JSON.stringify(data.posts    || []));
+            localStorage.setItem(UPCOMING_KEY, JSON.stringify(data.upcoming || []));
+            return;
+        }
     } catch(e) {}
-    localStorage.setItem(POSTS_KEY, JSON.stringify(seedPosts));
-    return seedPosts;
+
+    // 2. Fall back to whatever is in localStorage (e.g. local dev)
+    try {
+        const p = localStorage.getItem(POSTS_KEY);
+        const u = localStorage.getItem(UPCOMING_KEY);
+        if (p) { posts = JSON.parse(p); return; }
+    } catch(e) {}
+
+    // 3. Nothing at all — show empty state
+    posts = [];
 }
 
 function loadUpcoming() {
@@ -151,11 +150,8 @@ function loadUpcoming() {
         const s = localStorage.getItem(UPCOMING_KEY);
         if (s) return JSON.parse(s);
     } catch(e) {}
-    return seedUpcoming;
+    return [];
 }
-
-let posts        = loadPosts();
-let activeFilter = 'all';
 
 // ── UPCOMING ──────────────────────────────────────────────────────────────────
 function filterByProject(tag) {
@@ -165,34 +161,17 @@ function filterByProject(tag) {
     document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// Maps a project title (lowercase) to its dedicated page filename.
-// Add entries here as you create more project pages.
-const PROJECT_PAGES = {
-    'read me': 'read-me.html',
-};
-
 function renderUpcoming() {
     const list    = loadUpcoming();
     const allTags = getAllTags();
     document.getElementById('upcoming-grid').innerHTML = list.map(p => {
-        const page        = p.pageUrl || PROJECT_PAGES[p.title.toLowerCase()] || null;
         const matchingTag = allTags.find(t => t.toLowerCase() === p.title.toLowerCase()) || null;
-
-        let onclick, hint;
-        if (page) {
-            onclick = `window.location.href='${page}'`;
-            hint    = `<p class="click-hint">→ View project page</p>`;
-        } else if (matchingTag) {
-            const safeTag = matchingTag.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-            onclick = `filterByProject('${safeTag}')`;
-            hint    = `<p class="click-hint">↓ See related posts</p>`;
-        } else {
-            onclick = `filterByProject('')`;
-            hint    = `<p class="click-hint">↓ Browse all posts</p>`;
-        }
-
+        const hint = matchingTag
+            ? `<p class="click-hint">↓ See related posts</p>`
+            : `<p class="click-hint">↓ Browse all posts</p>`;
+        const safeTag = matchingTag ? matchingTag.replace(/\\/g,'\\\\').replace(/'/g,"\\'") : '';
         return `
-        <div class="upcoming-card" onclick="${onclick}">
+        <div class="upcoming-card" onclick="filterByProject('${safeTag}')">
             <span class="upcoming-status">${p.status}</span>
             <h3>${p.title}</h3>
             <p>${p.description}</p>
@@ -279,20 +258,22 @@ function toggleBody(id, btn) {
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-// Apply tag filter from URL param if present (e.g. blog.html?tag=Read+Me)
-const _urlTag = new URLSearchParams(window.location.search).get('tag');
-if (_urlTag) activeFilter = _urlTag;
+(async () => {
+    const _urlTag = new URLSearchParams(window.location.search).get('tag');
+    if (_urlTag) activeFilter = _urlTag;
 
-renderFilters();
-renderPosts();
-renderUpcoming(); // runs after posts so getAllTags() has data
+    await loadData();
 
-// Scroll to posts section if a tag was passed in the URL
-if (_urlTag) {
-    setTimeout(() => {
-        document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-}
+    renderFilters();
+    renderPosts();
+    renderUpcoming();
+
+    if (_urlTag) {
+        setTimeout(() => {
+            document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+})();
 </script>
 </body>
 </html>
