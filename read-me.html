@@ -25,6 +25,8 @@
         .hero .pitch { font-size: 1.35rem; color: #eeeeee; line-height: 1.7; max-width: 640px; margin: 0 auto 2.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .hero-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
         .hero-tag { background-color: #333333; padding: 0.4rem 1rem; border-radius: 15px; font-size: 0.85rem; color: #f5a623; border: 1px solid #444444; }
+        .hero-scroll-btn { display: inline-block; padding: 0.9rem 2.5rem; background: linear-gradient(135deg, #f5a623, #e67e22); color: white; border: none; border-radius: 50px; font-weight: 600; font-size: 1rem; font-family: inherit; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .hero-scroll-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(245,166,35,0.4); }
 
         /* ── SHARED SECTION ── */
         .section { padding: 5rem 2rem; }
@@ -161,6 +163,11 @@
             <span class="hero-tag">PvP</span>
             <span class="hero-tag">Solo Project</span>
         </div>
+        <div style="margin-top:2rem;">
+            <button onclick="document.getElementById('download-section').scrollIntoView({behavior:'smooth',block:'start'})" class="hero-scroll-btn">
+                ↓ Download
+            </button>
+        </div>
     </div>
 </section>
 
@@ -228,7 +235,7 @@
 
 
 <!-- DOWNLOAD -->
-<section class="section download-section">
+<section class="section download-section" id="download-section">
     <div class="section-inner">
         <h2>Download</h2>
         <div class="download-btn-wrap">
